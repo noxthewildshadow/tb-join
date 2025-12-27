@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conectando al Servidor...</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; background-color: #333; color: white; }
+        .btn { display: inline-block; background-color: #4CAF50; color: white; padding: 15px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; margin-top: 20px; }
+        .error { color: #ff6b6b; }
+    </style>
+</head>
+<body>
+    <h2>Redirigiendo a The Blockheads...</h2>
+    <p id="status">Preparando conexión...</p>
+    
+    <div id="manual-link" style="display:none;">
+        <p>Si no abre automáticamente, pulsa el botón:</p>
+        <a id="join-btn" href="#" class="btn">ENTRAR AL SERVIDOR</a>
+    </div>
+
+    <script>
+        // 1. Obtener los parámetros de la URL (lo que viene después del ?)
+        const params = new URLSearchParams(window.location.search);
+        const ip = params.get('ip');
+        const port = params.get('port');
+        const name = params.get('name') || 'Servidor Desconocido'; // Nombre por defecto si no pones uno
+
+        // 2. Verificar que tenemos IP y Puerto
+        if (ip && port) {
+            // Construir el Deep Link oficial
+            const deepLink = `theblockheads://join?ip=${ip}&port=${port}&name=${encodeURIComponent(name)}`;
+            
+            // Actualizar el botón manual por si acaso
+            document.getElementById('join-btn').href = deepLink;
+            document.getElementById('join-btn').innerText = `ENTRAR A: ${name}`;
+            document.getElementById('manual-link').style.display = 'block';
+            document.getElementById('status').innerText = `Intentando abrir: ${name}`;
+
+            // 3. Redirección automática
+            window.location.href = deepLink;
+        } else {
+            // Mensaje de error si faltan datos
+            document.getElementById('status').innerHTML = "<span class='error'>Error: Falta la IP o el Puerto en el enlace.</span>";
+        }
+    </script>
+</body>
+</html>
