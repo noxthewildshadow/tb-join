@@ -51,54 +51,34 @@
         }
 
         h1 {
-            font-size: 22px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-            margin-top: 0;
+            font-size: 22px; font-weight: 600; margin-bottom: 8px;
+            letter-spacing: 0.5px; margin-top: 0;
         }
 
         p.subtitle {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-top: 0;
-            margin-bottom: 25px;
+            font-size: 14px; color: var(--text-secondary);
+            margin-top: 0; margin-bottom: 25px;
         }
 
         /* --- Server Card --- */
         .server-card {
             background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-            text-align: left;
-            position: relative;
+            border-radius: 12px; padding: 20px;
+            margin-bottom: 25px; text-align: left; position: relative;
         }
 
         .label {
-            font-size: 11px;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 4px;
-            display: block;
+            font-size: 11px; text-transform: uppercase; color: var(--text-secondary);
+            font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; display: block;
         }
 
         .value {
-            font-size: 16px;
-            font-family: 'Consolas', 'Monaco', monospace;
-            color: #fff;
-            margin-bottom: 15px;
-            word-break: break-all;
-            display: block;
+            font-size: 16px; font-family: 'Consolas', 'Monaco', monospace;
+            color: #fff; margin-bottom: 15px; word-break: break-all; display: block;
         }
         
         .value.highlight {
-            color: #60a5fa;
-            font-weight: bold;
-            font-family: inherit;
-            font-size: 18px;
+            color: #60a5fa; font-weight: bold; font-family: inherit; font-size: 18px;
         }
 
         .value:last-child { margin-bottom: 0; }
@@ -110,31 +90,27 @@
             margin-bottom: 5px; font-weight: bold; text-transform: uppercase;
         }
         .glass-input {
-            width: 100%;
-            padding: 12px;
+            width: 100%; padding: 14px;
             background: var(--input-bg);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
+            border-radius: 8px; color: white; font-size: 15px;
+            box-sizing: border-box; outline: none; transition: border-color 0.2s;
         }
         .glass-input:focus { border-color: var(--accent-color); }
 
         .result-box {
-            margin-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-            display: none;
+            margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px; display: none;
         }
         .result-box.show { display: block; }
 
-        /* --- Buttons --- */
+        /* --- Buttons (Unified Size) --- */
         .btn {
             display: flex; justify-content: center; align-items: center;
-            width: 100%; padding: 16px;
+            width: 100%; /* Ocupa todo el ancho disponible */
+            box-sizing: border-box; /* Asegura que el padding no aumente el ancho */
+            padding: 15px; /* Relleno estándar para todos */
+            min-height: 54px; /* Altura mínima estándar */
             background-color: var(--accent-color);
             color: white; text-decoration: none;
             border-radius: 12px; font-weight: 600; font-size: 16px;
@@ -147,17 +123,18 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
         }
-        .btn svg { margin-right: 10px; width: 20px; height: 20px; }
+        .btn svg { margin-right: 10px; width: 22px; height: 22px; }
 
+        /* Sub-estilos de botones (manteniendo el tamaño base) */
         .btn-discord {
             background-color: rgba(88, 101, 242, 0.15); color: var(--discord-color);
-            box-shadow: none; font-size: 14px; padding: 12px;
+            box-shadow: none;
         }
         .btn-discord:hover { background-color: rgba(88, 101, 242, 0.25); transform: none; }
 
         .btn-outline {
             background: transparent; border: 1px solid rgba(255,255,255,0.2);
-            color: var(--text-secondary); box-shadow: none; font-size: 13px; padding: 10px;
+            color: var(--text-secondary); box-shadow: none;
         }
         .btn-outline:hover { border-color: white; color: white; transform: none; background: rgba(255,255,255,0.05); }
 
@@ -166,6 +143,7 @@
 
         /* --- Utilities --- */
         .copy-btn {
+            /* Este botón pequeño es la excepción */
             background: transparent; border: 1px solid var(--text-secondary);
             color: var(--text-secondary); font-size: 12px; padding: 5px 10px;
             border-radius: 4px; position: absolute; top: 20px; right: 20px;
