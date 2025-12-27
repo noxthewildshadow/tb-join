@@ -2,207 +2,325 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TB Joiner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Gateway | The Blockheads</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --input-bg: #2c2c2c;
-            --accent: #007bff; /* Azul clásico bonito */
-            --accent-dark: #0056b3;
-            --text: #ffffff;
-            --text-muted: #a0a0a0;
-            --border: #333;
+            --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: 1px solid rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --discord-color: #5865F2;
+            --input-bg: rgba(0, 0, 0, 0.3);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
+            box-sizing: border-box;
         }
 
         .container {
-            width: 100%;
-            max-width: 400px; /* Ancho ideal para movil */
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            box-sizing: border-box;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: var(--card-border);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            animation: fadeIn 0.8s ease-out;
+            position: relative;
         }
 
-        h1 { margin: 0 0 10px 0; font-size: 22px; text-align: center; }
-        p.desc { text-align: center; color: var(--text-muted); font-size: 14px; margin-bottom: 25px; margin-top: 0;}
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        /* --- Estilos del Formulario (Generador) --- */
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 12px; font-weight: bold; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
-        
-        input {
-            width: 100%;
-            padding: 14px;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: white;
+        h1 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            margin-top: 0;
+        }
+
+        p.subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+
+        /* --- Server Card --- */
+        .server-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+            position: relative;
+        }
+
+        .label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .value {
             font-size: 16px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            color: #fff;
+            margin-bottom: 15px;
+            word-break: break-all;
+            display: block;
+        }
+        
+        .value.highlight {
+            color: #60a5fa;
+            font-weight: bold;
+            font-family: inherit;
+            font-size: 18px;
+        }
+
+        .value:last-child { margin-bottom: 0; }
+
+        /* --- Inputs for Generator --- */
+        .input-group { text-align: left; margin-bottom: 15px; }
+        .input-group label {
+            display: block; font-size: 12px; color: var(--text-secondary); 
+            margin-bottom: 5px; font-weight: bold; text-transform: uppercase;
+        }
+        .glass-input {
+            width: 100%;
+            padding: 12px;
+            background: var(--input-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
             box-sizing: border-box;
             outline: none;
+            transition: border-color 0.2s;
         }
-        input:focus { border-color: var(--accent); }
+        .glass-input:focus { border-color: var(--accent-color); }
 
-        /* --- Estilos de la Tarjeta de Unirse --- */
-        .server-preview {
-            background: rgba(0,0,0,0.2);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
-            text-align: left;
-            border-left: 4px solid var(--accent);
+        .result-box {
+            margin-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+            display: none;
         }
-        .preview-label { font-size: 11px; color: var(--text-muted); display: block; }
-        .preview-value { font-size: 18px; font-weight: bold; margin-bottom: 10px; display: block; word-break: break-all;}
-        .preview-addr { font-family: monospace; font-size: 16px; color: #ccc; }
+        .result-box.show { display: block; }
 
-        /* --- Botones --- */
+        /* --- Buttons --- */
         .btn {
             display: flex; justify-content: center; align-items: center;
             width: 100%; padding: 16px;
-            border: none; border-radius: 12px;
-            font-size: 16px; font-weight: bold;
-            cursor: pointer; text-decoration: none;
-            box-sizing: border-box; transition: transform 0.1s;
+            background-color: var(--accent-color);
+            color: white; text-decoration: none;
+            border-radius: 12px; font-weight: 600; font-size: 16px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            border: none; cursor: pointer; margin-bottom: 15px;
         }
-        .btn:active { transform: scale(0.98); }
+        .btn:hover {
+            background-color: var(--accent-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+        .btn svg { margin-right: 10px; width: 20px; height: 20px; }
 
-        .btn-primary { background-color: var(--accent); color: white; margin-bottom: 10px; }
-        .btn-secondary { background-color: #333; color: white; }
-        .btn-copy { background-color: #28a745; color: white; margin-top: 10px; }
+        .btn-discord {
+            background-color: rgba(88, 101, 242, 0.15); color: var(--discord-color);
+            box-shadow: none; font-size: 14px; padding: 12px;
+        }
+        .btn-discord:hover { background-color: rgba(88, 101, 242, 0.25); transform: none; }
 
-        /* --- Utilidades --- */
+        .btn-outline {
+            background: transparent; border: 1px solid rgba(255,255,255,0.2);
+            color: var(--text-secondary); box-shadow: none; font-size: 13px; padding: 10px;
+        }
+        .btn-outline:hover { border-color: white; color: white; transform: none; background: rgba(255,255,255,0.05); }
+
+        .btn-success { background-color: #10b981; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); }
+        .btn-success:hover { background-color: #059669; }
+
+        /* --- Utilities --- */
+        .copy-btn {
+            background: transparent; border: 1px solid var(--text-secondary);
+            color: var(--text-secondary); font-size: 12px; padding: 5px 10px;
+            border-radius: 4px; position: absolute; top: 20px; right: 20px;
+            cursor: pointer; transition: 0.2s;
+        }
+        .copy-btn:hover { color: white; border-color: white; }
+
+        .footer { margin-top: 25px; font-size: 12px; color: rgba(255,255,255,0.3); }
         .hidden { display: none; }
-        .result-box { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; }
-        
-        /* Discord Link pequeño */
-        .discord-mini {
-            margin-top: 25px;
-            font-size: 12px;
-            text-align: center;
-        }
-        .discord-mini a { color: #5865F2; text-decoration: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
         
-        <div id="join-mode" class="hidden">
-            <h1>Join Server</h1>
-            <p class="desc">The Blockheads</p>
+        <h1 id="page-title">Server Gateway</h1>
+        <p class="subtitle" id="page-desc">The Blockheads Connection Tool</p>
 
-            <div class="server-preview">
-                <span class="preview-label">SERVER NAME</span>
-                <span class="preview-value" id="join-name">...</span>
-                <span class="preview-label">ADDRESS</span>
-                <span class="preview-addr"><span id="join-ip"></span>:<span id="join-port"></span></span>
+        <div id="join-container" class="hidden">
+            <div class="server-card">
+                <button class="copy-btn" onclick="copyIP()" id="copy-btn-text">Copy IP</button>
+                
+                <span class="label">Server Name</span>
+                <span class="value highlight" id="server-name-display">Loading...</span>
+
+                <span class="label">Direct Address</span>
+                <span class="value"><span id="ip-display"></span>:<span id="port-display"></span></span>
             </div>
 
-            <a id="btn-launch" href="#" class="btn btn-primary">LAUNCH GAME</a>
-            
-            <button onclick="manualCopy()" class="btn btn-secondary" style="font-size: 14px; padding: 12px;">
-                Copy IP (If launch fails)
+            <a id="join-btn" href="#" class="btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                LAUNCH GAME
+            </a>
+
+            <a href="https://discord.gg/wS6amXGXX5" target="_blank" class="btn btn-discord">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36" fill="currentColor">
+                    <path d="M107.7,8.07A105.15,105.15,0,0,0,81.47,0a72.06,72.06,0,0,0-3.36,6.83A97.68,97.68,0,0,0,49,6.83,72.37,72.37,0,0,0,45.64,0,105.89,105.89,0,0,0,19.39,8.09C2.79,32.65-1.71,56.6.54,80.21h0A105.73,105.73,0,0,0,32.71,96.36,77.11,77.11,0,0,0,39.6,85.25a68.42,68.42,0,0,1-10.85-5.18c.91-.66,1.8-1.34,2.66-2a75.57,75.57,0,0,0,64.32,0c.87.71,1.76,1.39,2.66,2a68.68,68.68,0,0,1-10.87,5.19,77,77,0,0,0,6.89,11.1A105.89,105.89,0,0,0,126.6,80.22c2.36-24.44-5.42-48.18-18.9-72.15ZM42.45,65.69C36.18,65.69,31,60,31,53s5-12.74,11.43-12.74S54,46,53.89,53,48.84,65.69,42.45,65.69Zm42.24,0C78.41,65.69,73.25,60,73.25,53s5-12.74,11.44-12.74S96.23,46,96.12,53,91.08,65.69,84.69,65.69Z"/>
+                </svg>
+                Join Discord
+            </a>
+
+            <button onclick="showCreator()" class="btn btn-outline" style="margin-top: 20px;">
+                Create your own link
             </button>
         </div>
 
-        <div id="create-mode" class="hidden">
-            <h1>Link Generator</h1>
-            <p class="desc">Create a shareable link for any server.</p>
-
-            <div class="form-group">
+        <div id="create-container" class="hidden">
+            <div class="input-group">
                 <label>Server Name</label>
-                <input type="text" id="in-name" placeholder="My Cool Server">
+                <input type="text" id="in-name" class="glass-input" placeholder="My Awesome Server">
             </div>
-
-            <div class="form-group">
-                <label>IP / Domain</label>
-                <input type="text" id="in-ip" placeholder="play.server.net">
+            <div class="input-group">
+                <label>IP / DNS</label>
+                <input type="text" id="in-ip" class="glass-input" placeholder="play.example.com">
             </div>
-
-            <div class="form-group">
+            <div class="input-group">
                 <label>Port</label>
-                <input type="number" id="in-port" placeholder="15151">
+                <input type="number" id="in-port" class="glass-input" placeholder="15151">
             </div>
 
-            <button onclick="generateLink()" class="btn btn-primary">GENERATE LINK</button>
+            <button onclick="generateLink()" class="btn">GENERATE LINK</button>
 
-            <div id="result-area" class="result-box hidden">
-                <label>Your Link:</label>
-                <input type="text" id="out-link" readonly onclick="this.select()">
-                <button onclick="copyGenerated()" class="btn btn-copy">COPY TO CLIPBOARD</button>
+            <div id="result-area" class="result-box">
+                <div class="input-group">
+                    <label>Your Link:</label>
+                    <input type="text" id="out-link" class="glass-input" readonly onclick="this.select()">
+                </div>
+                <button onclick="copyGenerated()" class="btn btn-success" id="btn-copy-gen">COPY TO CLIPBOARD</button>
             </div>
+            
+            <button onclick="backToJoin()" id="btn-back" class="btn btn-outline hidden">
+                Cancel / Back
+            </button>
         </div>
 
-        <div class="discord-mini">
-            Powered by <a href="https://discord.gg/wS6amXGXX5">NoxTheWildShadow</a>
+        <div class="footer">
+            Powered by TB-Join Gateway
         </div>
-
     </div>
 
     <script>
-        // --- LÓGICA ---
+        // --- LOGIC ---
         const params = new URLSearchParams(window.location.search);
+        const nameRaw = params.get('name');
+        const nameDisplayName = nameRaw || 'Unknown Server'; 
         const ip = params.get('ip');
         const port = params.get('port');
-        const name = params.get('name');
 
-        const joinMode = document.getElementById('join-mode');
-        const createMode = document.getElementById('create-mode');
+        const joinContainer = document.getElementById('join-container');
+        const createContainer = document.getElementById('create-container');
+        const pageTitle = document.getElementById('page-title');
+        const pageDesc = document.getElementById('page-desc');
 
-        // 1. DECIDIR QUÉ PANTALLA MOSTRAR
+        // Check startup state
         if (ip && port) {
-            // ---> MODO UNIRSE (Hay datos en el link)
-            showJoinScreen(ip, port, name);
-        } else {
-            // ---> MODO CREADOR (No hay datos, mostrar formulario)
-            createMode.classList.remove('hidden');
-        }
-
-        function showJoinScreen(ip, port, name) {
-            joinMode.classList.remove('hidden');
-            const finalName = name || 'Unknown Server';
+            // SHOW JOIN SCREEN
+            joinContainer.classList.remove('hidden');
             
-            // Llenar datos visuales
-            document.getElementById('join-name').innerText = finalName;
-            document.getElementById('join-ip').innerText = ip;
-            document.getElementById('join-port').innerText = port;
-
-            // Construir Deep Link (Protocolo blockheads:// para iOS)
-            const deepLink = `blockheads://join?ip=${ip}&port=${port}&name=${encodeURIComponent(finalName)}`;
+            // Fill Data
+            document.getElementById('server-name-display').innerText = nameDisplayName;
+            document.getElementById('ip-display').innerText = ip;
+            document.getElementById('port-display').innerText = port;
             
-            const btnLaunch = document.getElementById('btn-launch');
-            btnLaunch.href = deepLink;
+            // Deep Link
+            const deepLink = `blockheads://join?ip=${ip}&port=${port}&name=${encodeURIComponent(nameDisplayName)}`;
+            const joinBtn = document.getElementById('join-btn');
+            joinBtn.href = deepLink;
 
-            // Redirección Automática suave
+            // Auto-Redirect
             setTimeout(() => {
-                window.location.href = deepLink;
+                 pageTitle.innerText = "Ready to Launch";
+                 pageDesc.innerText = "If the game doesn't open, tap 'Launch Game'.";
+                 window.location.href = deepLink;
             }, 800);
+
+            // Enable "Back" button in creator just in case they switch
+            document.getElementById('btn-back').classList.remove('hidden');
+            
+        } else {
+            // SHOW CREATOR SCREEN (No params found)
+            showCreator();
+            pageTitle.innerText = "Link Generator";
+            pageDesc.innerText = "Create a shareable link for any server.";
+            document.getElementById('btn-back').classList.add('hidden'); // Can't go back if there is no join data
         }
 
-        // Función para copiar IP manualmente si falla
-        function manualCopy() {
-            const txt = document.getElementById('join-ip').innerText + ":" + document.getElementById('join-port').innerText;
-            navigator.clipboard.writeText(txt).then(() => alert("IP Copied!"));
+        // --- FUNCTIONS ---
+
+        function showCreator() {
+            joinContainer.classList.add('hidden');
+            createContainer.classList.remove('hidden');
+            pageTitle.innerText = "Link Generator";
         }
 
-        // --- LÓGICA DEL GENERADOR ---
+        function backToJoin() {
+            createContainer.classList.add('hidden');
+            joinContainer.classList.remove('hidden');
+            pageTitle.innerText = "Server Gateway";
+        }
+
+        function copyIP() {
+            if(ip && port) {
+                const fullAddress = ip + ":" + port;
+                navigator.clipboard.writeText(fullAddress).then(() => {
+                    const btn = document.getElementById('copy-btn-text');
+                    const originalText = btn.innerText;
+                    btn.innerText = "Copied!";
+                    setTimeout(() => { btn.innerText = originalText; }, 2000);
+                });
+            }
+        }
+
         function generateLink() {
             const iName = document.getElementById('in-name').value.trim();
             const iIp = document.getElementById('in-ip').value.trim();
@@ -213,25 +331,22 @@
                 return;
             }
 
-            // Obtener la URL base actual (tu github)
             const baseUrl = window.location.href.split('?')[0];
-            
-            // Crear nuevo link
             const newLink = `${baseUrl}?ip=${iIp}&port=${iPort}&name=${encodeURIComponent(iName)}`;
 
-            // Mostrar resultado
-            document.getElementById('result-area').classList.remove('hidden');
+            document.getElementById('result-area').classList.add('show');
             document.getElementById('out-link').value = newLink;
         }
 
         function copyGenerated() {
             const copyText = document.getElementById("out-link");
             copyText.select();
-            copyText.setSelectionRange(0, 99999); // Para móviles
+            copyText.setSelectionRange(0, 99999);
             navigator.clipboard.writeText(copyText.value).then(() => {
-                const btn = document.querySelector('.btn-copy');
+                const btn = document.getElementById('btn-copy-gen');
+                const originalText = btn.innerText;
                 btn.innerText = "COPIED!";
-                setTimeout(() => btn.innerText = "COPY TO CLIPBOARD", 2000);
+                setTimeout(() => btn.innerText = originalText, 2000);
             });
         }
     </script>
